@@ -119,4 +119,57 @@ Otra operaciones utiles:
 - __Cuando un usuario se conecta__: escribiendo los comandos en /etc/profile.d/
 - __Cuando se abre una terminal__: escribiendo los comandos al final del fichero ~/.bashrc
 
+## Usuarios y grupos
+
+- El concepto de usuarios en Linux permite separar entornos de ejecución para diferentes propositos.
+- Es común que muchos servicios del sistema tengan su propio usuario para restringir el acceso como mecanismo de seguridad. 
+- La configuración de los usuarios se maneja en los ficheros /etc/passwd y /etc/shadow
+
+### /etc/passwd
+
+- Contiene la información de las cuentas de usuario y características.
+> El formato es name:password:UID:GID:GECOS:directory:shell
+
+Un ejemplo de usuario es:
+> avahi:x:115:120:Avahi mDNS daemon,,,:/var/run/avahi-daemon:/bin/false
+
+### /etc/shadow
+
+- Contiene la información de las contraseñas de forma cifrada.
+> El formato es name:password:lastmod:min:max:aviso:inactividad:expiración:reservado
+
+- Sobre el campo de password, puede haber un * (nunca ha tenido un password), o ! (ha sido deshabilitada).
+- Cuando se bloquea un usuario con `usermod -l user`, se añade un ! al comienzo del hash del password para indicar que se ha bloqueado.
+
+### Gestión de usuarios y contraseñas
+
+- Los comandos básicos para la gestión de usuarios son:
+    - Crear un usuario: `useradd`
+    - Borrar un usuario: `userdel`
+    - Modificar un usuario: `usermod` (Tiene una opción para todos los campos de /etc/shadow excepto GECOS. Incluye la opción de lock/unlock)
+    - Modificar GECOS: `chfn`
+    - Modificar shell: `chsh`
+    - Modificar fechas de contraseña de /etc/shadow: `chage`
+    - Para cambiar la contraseña: `passwd user`__
+    - Para visualizar la información de GECOS: `finger user`.
+
+### Gestión de grupos
+
+Los grupos permiten conceder permisos a un conjunto de usuarios simultáneamente.
+Existen los __grupos primarios__ (que consta como GID en /etc/passwd, pudiendo ser solo uno) y los __grupos secundarios__ (gestionados en el fichero /etc/groups, donde pueden haber varios usuarios).
+
+### /etc/group
+
+- Consta del siguiente formato: _name:passwd:GID:miembros_
+- De forma similar a /etc/shadow, existe una versión para grupos, __/etc/gshadow__
+- Los comandos básicos para la gestión del grupo son:
+    - Crear un grupo: `groupadd`
+    - Borrar un grupo: `groupdel`
+    - Modificar un campo de /etc/groups: `groupmod`
+    - Modificar el password del grupo: `gpasswd`
+- Para cambiar los grupos de un usuario, se suelen usar las siguientes opciones del `usermod`:
+    - Modificar grupo primario: `usermod -g GROUP user`
+    - Modificar grupos secundarios: `usermod -G GROUP user`
+    - Añadir a un grupo secundario SIN SOBRESCRIBIR: `usermod -a -G GROUP user`
+
 </div>
